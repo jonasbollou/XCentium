@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using HtmlAgilityPack;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,8 +45,7 @@ namespace XCentium.Web.Controllers
             string htmlContent = ExtractContent(url);
 
             // Extract url from 'img' tags
-            string regExPattern = "<img.+?src=[\"'](.+?)[\"'].+?>";
-            List<string> results = GetImageUrlsFromSource(htmlContent, regExPattern);
+            List<string> results = GetImageUrlsFromSource(htmlContent);
 
 
             return Json(new
@@ -70,21 +70,16 @@ namespace XCentium.Web.Controllers
             return null;
         }
 
-        private List<string> GetImageUrlsFromSource(string content, string regEx)
+        private List<string> GetImageUrlsFromSource(string content)
         {
             List<string> results = new List<string>();
 
-            MatchCollection matches = Regex.Matches(content, regEx, RegexOptions.IgnoreCase);
-
-            foreach(var match in matches)
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(content);
+            HtmlNodeCollection images = doc.DocumentNode.SelectNodes("//img[@src]");
+            foreach(var image in images)
             {
-                string imgUrl = match.ToString().Contains("src") ? 
-                                    "" 
-                                    : "";
-
-                imgUrl = match.ToString();
-
-                results.Add(imgUrl);
+                results.Add(image.Attributes["src"].Value);
             }
 
             return results;
