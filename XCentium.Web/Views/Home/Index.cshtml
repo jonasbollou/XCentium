@@ -3,22 +3,35 @@
 }
 
 <div class="jumbotron">
-    <h1>XCENTIUM Test Code</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <h1>XCENTIUM Test</h1>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        <h2>Test: Extract images and words</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
+        <h2>Extract images and words</h2>
         <p>
             <input type="text" id="targetUrl" placeholder="Enter the URL" />
             <button class="btn btn-default" onclick="processUrl();">Process</button>
         </p>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <p>Number of words: <label id="totalWords"></label></p>
+    </div>
+    <div class="col-md-6">
+        <p>Top 8 words: <label id="top8Words"></label></p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p><strong>Image Gallery</strong></p>
+        <ul id="imgGallery">
+            <li></li>
+        </ul>
     </div>
 </div>
 
@@ -30,12 +43,14 @@
 
         $.ajax({
             type: 'POST',
-            //url: '/Home/GetExtractedData',
             url: '@Url.Action("GetExtractedData", "Home")',
             data: { url: targetUrl },
             cache: false,
             success: function (result) {
-                alert(result.html);
+
+                $('#totalWords').html(result.NbWords);
+                $('#top8Words').html(result.Top8Words);
+                $('#imgGallery').html(result.imgGallery);
             }
         });
 
